@@ -8,9 +8,10 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * The root template that is loaded on the first page visit.
+     * The root template that's loaded on the first page visit.
      */
     protected $rootView = 'app';
+
 
     /**
      * Define the props that are shared by default.
@@ -21,11 +22,13 @@ class HandleInertiaRequests extends Middleware
 
             ...parent::share($request),
 
+
             'auth' => [
 
                 'user' => $request->user(),
 
             ],
+
 
         ];
     }
