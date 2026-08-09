@@ -24,29 +24,36 @@ const form = useForm({
 
 
 
-
 function openEdit(employee:any)
 {
 
+    console.log("EDIT DATA:", employee);
 
-    setEditing(employee);
+
+    setEditing({
+        id: employee.id,
+        first_name: employee.first_name,
+        last_name: employee.last_name,
+        company_id: employee.company_id,
+        email: employee.email,
+        phone: employee.phone
+    });
 
 
 
     form.setData({
 
-        first_name:employee.first_name,
+        first_name: employee.first_name ?? '',
 
-        last_name:employee.last_name,
+        last_name: employee.last_name ?? '',
 
-        company_id:String(employee.company_id),
+        company_id: String(employee.company_id),
 
-        email:employee.email ?? '',
+        email: employee.email ?? '',
 
-        phone:employee.phone ?? '',
+        phone: employee.phone ?? '',
 
     });
-
 
 }
 
@@ -58,12 +65,14 @@ function openEdit(employee:any)
 function save(e:any)
 {
 
-
     e.preventDefault();
 
 
-    if(!editing)
+    if(!editing?.id)
+    {
+        console.log("Missing employee ID");
         return;
+    }
 
 
 
@@ -76,21 +85,27 @@ function save(e:any)
 
         {
 
+            preserveScroll:true,
+
 
             onSuccess:()=>{
 
                 setEditing(null);
 
-            }
+            },
 
+
+            onError:(errors:any)=>{
+
+                console.log(errors);
+
+            }
 
         }
 
     );
 
-
 }
-
 
 
 

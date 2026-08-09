@@ -3,16 +3,24 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 
+
 interface Company {
 
     id:number;
+
     name:string;
+
     address:string|null;
+
     email:string|null;
+
     website:string|null;
+
     logo:string|null;
 
 }
+
+
 
 
 
@@ -20,102 +28,143 @@ export default function Index({companies}:any)
 {
 
 
-    const [editing,setEditing] = useState<Company|null>(null);
+const [editing,setEditing] = useState<Company|null>(null);
 
 
 
-    const form = useForm<{
-        name:string;
-        address:string;
-        email:string;
-        website:string;
-        logo:File|null;
-    }>({
 
-        name:'',
-        address:'',
-        email:'',
-        website:'',
+const form = useForm({
+
+    name:'',
+    address:'',
+    email:'',
+    website:'',
+    logo:null as File|null
+
+});
+
+
+
+
+
+
+function openEdit(company:Company)
+{
+
+
+    setEditing(company);
+
+
+
+    form.setData({
+
+        name:company.name ?? '',
+
+        address:company.address ?? '',
+
+        email:company.email ?? '',
+
+        website:company.website ?? '',
+
         logo:null
 
     });
 
 
 
-
-
-    function openEdit(company:Company)
-    {
-
-        setEditing(company);
-
-
-        form.setData({
-
-            name:company.name ?? '',
-
-            address:company.address ?? '',
-
-            email:company.email ?? '',
-
-            website:company.website ?? '',
-
-            logo:null
-
-        });
-
-
-    }
+}
 
 
 
 
 
-    function submit()
-    {
 
 
-        if(!editing)
-            return;
+function save(e:any)
+{
+
+
+    e.preventDefault();
 
 
 
-        form.post(
-
-            route(
-                'companies.update',
-                editing.id
-            ),
-
-            {
-
-                forceFormData:true,
+    if(!editing?.id)
+        return;
 
 
-                headers:{
-                    'X-HTTP-Method-Override':'PUT'
-                },
 
 
-                preserveScroll:true,
+    form.post(
+
+        route(
+            'companies.update',
+            editing.id
+        ),
+
+        {
 
 
-                onSuccess:()=>{
-
-                    setEditing(null);
-
-                    form.reset();
-
-                },
+            forceFormData:true,
 
 
-                onError:(errors:any)=>{
+            headers:{
 
-                    console.log(errors);
+                'X-HTTP-Method-Override':'PUT'
 
-                }
+            },
+
+
+            preserveScroll:true,
+
+
+
+            onSuccess:()=>{
+
+
+                setEditing(null);
+
+
+            },
+
+
+            onError:(errors:any)=>{
+
+
+                console.log(errors);
+
 
             }
+
+
+        }
+
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+function remove(id:number)
+{
+
+
+    if(confirm("Delete company?"))
+    {
+
+
+        router.delete(
+
+            route(
+                'companies.destroy',
+                id
+            )
 
         );
 
@@ -123,32 +172,7 @@ export default function Index({companies}:any)
     }
 
 
-
-
-
-
-
-    function remove(id:number)
-    {
-
-
-        if(confirm('Delete company?'))
-        {
-
-            router.delete(
-
-                route(
-                    'companies.destroy',
-                    id
-                )
-
-            );
-
-        }
-
-
-    }
-
+}
 
 
 
@@ -158,34 +182,55 @@ export default function Index({companies}:any)
 
 return (
 
+
 <AuthenticatedLayout>
+
 
 
 <Head title="Companies"/>
 
 
 
-<div className="mb-6">
-
-    <h1 className="text-3xl font-bold mb-4">
-        Companies
-    </h1>
+<div className="p-6">
 
 
-    <Link
-        href="/companies/create"
-        className="
-        inline-flex
-        bg-green-600
-        text-white
-        px-5
-        py-2
-        rounded-lg
-        hover:bg-green-700
-        "
-    >
-        + Create New Company
-    </Link>
+
+<h1 className="
+text-3xl
+font-bold
+mb-5
+">
+
+Companies
+
+</h1>
+
+
+
+
+
+<div className="
+mb-5
+">
+
+
+<Link
+
+href="/companies/create"
+
+className="
+bg-green-600
+text-white
+px-5
+py-2
+rounded
+"
+
+>
+
++ Create New Company
+
+</Link>
 
 
 </div>
@@ -193,53 +238,75 @@ return (
 
 
 
+
+
 <div className="
 bg-white
+rounded
 shadow
-rounded-xl
 overflow-hidden
 ">
 
 
 <table className="
 w-full
-text-left
 ">
 
 
-<thead className="bg-gray-100">
+<thead className="
+bg-gray-100
+">
 
 
 <tr>
 
 
-<th className="p-4">
+<th className="p-3 text-left">
+
 Logo
+
 </th>
 
 
-<th className="p-4">
-Name
+<th className="p-3 text-left">
+
+Company Name
+
 </th>
 
 
-<th className="p-4">
+
+<th className="p-3 text-left">
+
 Address
+
 </th>
 
 
-<th className="p-4">
-Website
-</th>
 
 
-<th className="p-4">
+<th className="p-3 text-left">
+
 Email
+
 </th>
 
 
-<th className="p-4">
+
+
+<th className="p-3 text-left">
+
+Website
+
+</th>
+
+
+
+
+<th className="p-3 text-left">
+
 Action
+
 </th>
 
 
@@ -247,6 +314,8 @@ Action
 
 
 </thead>
+
+
 
 
 
@@ -260,36 +329,57 @@ Action
 companies.data.map((company:Company)=>(
 
 
-<tr key={company.id} className="border-t">
+<tr
+
+key={company.id}
+
+className="
+border-t
+"
 
 
-<td className="p-4">
+>
+
+
+<td className="p-3">
 
 
 {
 
 company.logo ?
 
+
 <img
 
 src={`/storage/${company.logo}`}
 
 className="
-w-12
-h-12
-object-cover
+w-14
+h-14
 rounded
+object-cover
 "
 
 />
 
+
 :
 
-<span className="text-gray-400">
+<div className="
+w-14
+h-14
+rounded
+bg-gray-200
+flex
+items-center
+justify-center
+text-xs
+">
 
-No logo
+No Logo
 
-</span>
+</div>
+
 
 }
 
@@ -299,28 +389,55 @@ No logo
 
 
 
-<td className="p-4">
+
+
+<td className="p-3 font-semibold">
+
+
 {company.name}
-</td>
 
 
-<td className="p-4">
-{company.address}
-</td>
-
-
-<td className="p-4">
-{company.website}
-</td>
-
-
-<td className="p-4">
-{company.email}
 </td>
 
 
 
-<td className="p-4">
+
+
+<td className="p-3">
+
+{company.address ?? '-'}
+
+</td>
+
+
+
+
+
+
+<td className="p-3">
+
+{company.email ?? '-'}
+
+</td>
+
+
+
+
+
+<td className="p-3">
+
+{company.website ?? '-'}
+
+</td>
+
+
+
+
+
+
+
+<td className="p-3">
+
 
 
 <button
@@ -341,6 +458,8 @@ mr-2
 Edit
 
 </button>
+
+
 
 
 
@@ -369,7 +488,10 @@ Delete
 
 
 
+
+
 </tr>
+
 
 
 ))
@@ -389,6 +511,64 @@ Delete
 </div>
 
 
+
+
+
+
+
+
+<div className="
+mt-5
+flex
+gap-2
+">
+
+
+{
+
+
+companies.links.map((link:any,index:number)=>(
+
+
+<a
+
+key={index}
+
+href={link.url ?? '#'}
+
+className={`
+px-3
+py-1
+border
+rounded
+
+${link.active
+?
+'bg-green-600 text-white'
+:
+''
+}
+
+`}
+
+dangerouslySetInnerHTML={{
+
+__html:link.label
+
+}}
+
+
+/>
+
+
+
+))
+
+
+}
+
+
+
 </div>
 
 
@@ -398,13 +578,16 @@ Delete
 
 
 
+
 {
-editing &&
+editing && (
+
+
 
 <div className="
 fixed
 inset-0
-bg-black/50
+bg-black/40
 flex
 items-center
 justify-center
@@ -414,15 +597,15 @@ z-50
 
 <div className="
 bg-white
-rounded-xl
-p-8
-w-full
-max-w-xl
+rounded
+shadow-xl
+p-6
+w-[450px]
 ">
 
 
 <h2 className="
-text-2xl
+text-xl
 font-bold
 mb-5
 ">
@@ -435,17 +618,20 @@ Edit Company
 
 
 
+
+
 {
 
 editing.logo ?
+
 
 <img
 
 src={`/storage/${editing.logo}`}
 
 className="
-w-28
-h-28
+w-24
+h-24
 rounded
 object-cover
 mb-4
@@ -453,16 +639,23 @@ mb-4
 
 />
 
+
 :
 
-<p className="text-gray-500 mb-4">
+
+<div className="
+mb-4
+text-gray-500
+">
 
 No logo added
 
-</p>
+</div>
 
 
 }
+
+
 
 
 
@@ -472,18 +665,22 @@ No logo added
 
 type="file"
 
-accept="image/*"
-
-className="mb-4"
+className="
+mb-4
+"
 
 onChange={(e)=>
 
 form.setData(
+
 'logo',
+
 e.target.files?.[0] ?? null
+
 )
 
 }
+
 
 />
 
@@ -491,79 +688,138 @@ e.target.files?.[0] ?? null
 
 
 
+
 <input
 
-className="border w-full p-3 mb-3"
+className="
+border
+w-full
+p-2
+mb-3
+"
+
+placeholder="Company Name"
 
 value={form.data.name}
 
 onChange={(e)=>
 
 form.setData(
+
 'name',
+
 e.target.value
+
 )
 
 }
+
 
 />
 
 
 
+
+
+
+
 <input
 
-className="border w-full p-3 mb-3"
+className="
+border
+w-full
+p-2
+mb-3
+"
+
+placeholder="Address"
 
 value={form.data.address}
 
 onChange={(e)=>
 
 form.setData(
+
 'address',
+
 e.target.value
+
 )
 
 }
+
 
 />
 
 
 
+
+
+
 <input
 
-className="border w-full p-3 mb-3"
+className="
+border
+w-full
+p-2
+mb-3
+"
+
+placeholder="Email"
 
 value={form.data.email}
 
 onChange={(e)=>
 
 form.setData(
+
 'email',
+
 e.target.value
+
 )
 
 }
+
 
 />
 
 
 
+
+
+
+
+
 <input
 
-className="border w-full p-3 mb-5"
+className="
+border
+w-full
+p-2
+mb-5
+"
+
+placeholder="Website"
 
 value={form.data.website}
 
 onChange={(e)=>
 
 form.setData(
+
 'website',
+
 e.target.value
+
 )
 
 }
 
+
 />
+
+
 
 
 
@@ -571,22 +827,27 @@ e.target.value
 
 <button
 
-onClick={submit}
+onClick={save}
 
 className="
 bg-green-600
 text-white
-px-5
+px-4
 py-2
 rounded
-mr-3
+mr-2
 "
 
 >
 
 Save
 
+
 </button>
+
+
+
+
 
 
 
@@ -596,7 +857,7 @@ onClick={()=>setEditing(null)}
 
 className="
 border
-px-5
+px-4
 py-2
 rounded
 "
@@ -605,21 +866,35 @@ rounded
 
 Cancel
 
+
 </button>
 
 
 
-</div>
 
 
 </div>
+
+
+
+</div>
+
+
+
+)
 
 
 }
 
 
 
+
+</div>
+
+
+
 </AuthenticatedLayout>
+
 
 
 );

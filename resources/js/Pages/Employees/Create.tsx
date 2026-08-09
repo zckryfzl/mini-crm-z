@@ -7,16 +7,18 @@ export default function Create({companies}:any)
 {
 
 
-const form = useForm({
+const {
+    data,
+    setData,
+    post,
+    errors,
+    processing
+}=useForm({
 
     first_name:'',
-
     last_name:'',
-
     company_id:'',
-
     email:'',
-
     phone:''
 
 });
@@ -25,16 +27,20 @@ const form = useForm({
 
 
 
-function submit(e:any)
+function submit(e:React.FormEvent)
 {
 
+    e.preventDefault();
 
-e.preventDefault();
 
+    post(
+        route('employees.store'),
+        {
 
-form.post(
-route('employees.store')
-);
+            preserveScroll:true
+
+        }
+    );
 
 
 }
@@ -52,13 +58,28 @@ return (
 <Head title="Create Employee"/>
 
 
-<div className="p-6">
+
+<div className="
+p-6
+max-w-xl
+mx-auto
+">
 
 
-<div className="bg-white p-6 rounded shadow w-[500px]">
+
+<div className="
+bg-white
+shadow
+rounded-xl
+p-6
+">
 
 
-<h1 className="text-xl font-bold mb-5">
+<h1 className="
+text-2xl
+font-bold
+mb-6
+">
 
 Create Employee
 
@@ -68,70 +89,160 @@ Create Employee
 
 
 
-<form onSubmit={submit}>
+<form
+onSubmit={submit}
+className="
+space-y-5
+">
+
+
+
+<div>
+
+<label className="block mb-1">
+
+First Name *
+
+</label>
 
 
 <input
 
-className="border p-2 w-full mb-3"
+className="
+border
+rounded
+w-full
+p-2
+"
 
-placeholder="First Name"
+value={data.first_name}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+setData(
 'first_name',
 e.target.value
 )
+
 }
 
 />
 
 
+{
+errors.first_name &&
+
+<p className="text-red-500 text-sm">
+
+{errors.first_name}
+
+</p>
+
+}
+
+
+</div>
+
+
+
+
+
+
+
+<div>
+
+<label className="block mb-1">
+
+Last Name *
+
+</label>
 
 
 <input
 
-className="border p-2 w-full mb-3"
+className="
+border
+rounded
+w-full
+p-2
+"
 
-placeholder="Last Name"
+value={data.last_name}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+setData(
 'last_name',
 e.target.value
 )
+
 }
 
 />
 
 
+{
+errors.last_name &&
+
+<p className="text-red-500 text-sm">
+
+{errors.last_name}
+
+</p>
+
+}
 
 
+</div>
+
+
+
+
+
+
+
+<div>
+
+
+<label className="block mb-1">
+
+Company *
+
+</label>
 
 
 <select
 
-className="border p-2 w-full mb-3"
+className="
+border
+rounded
+w-full
+p-2
+"
 
-onChange={
-e=>form.setData(
+value={data.company_id}
+
+onChange={(e)=>
+
+setData(
 'company_id',
 e.target.value
 )
+
 }
 
 >
 
 
-<option>
+<option value="">
 
 Select Company
 
 </option>
 
 
-{
 
+{
 companies.map((company:any)=>(
 
 
@@ -153,49 +264,96 @@ value={company.id}
 }
 
 
+
 </select>
 
 
+</div>
 
 
 
+
+
+
+
+<div>
+
+<label className="block mb-1">
+
+Email
+
+</label>
 
 
 <input
 
-className="border p-2 w-full mb-3"
+type="email"
 
-placeholder="Email"
+className="
+border
+rounded
+w-full
+p-2
+"
 
-onChange={
-e=>form.setData(
+value={data.email}
+
+onChange={(e)=>
+
+setData(
 'email',
 e.target.value
 )
+
 }
 
 />
 
 
+</div>
 
 
 
+
+
+
+
+
+<div>
+
+<label className="block mb-1">
+
+Phone
+
+</label>
 
 
 <input
 
-className="border p-2 w-full mb-3"
+className="
+border
+rounded
+w-full
+p-2
+"
 
-placeholder="Phone"
+value={data.phone}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+setData(
 'phone',
 e.target.value
 )
+
 }
 
 />
+
+
+</div>
+
+
 
 
 
@@ -204,19 +362,32 @@ e.target.value
 
 <button
 
+disabled={processing}
+
 className="
 bg-green-600
 text-white
 px-5
 py-2
-rounded
+rounded-lg
+disabled:opacity-50
 "
 
 >
 
-Save Employee
+
+{
+processing
+?
+'Saving...'
+:
+'Save Employee'
+
+}
+
 
 </button>
+
 
 
 
@@ -225,13 +396,17 @@ Save Employee
 </form>
 
 
+
 </div>
 
 
+
 </div>
+
 
 
 </AuthenticatedLayout>
+
 
 );
 

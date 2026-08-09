@@ -118,66 +118,68 @@ class CompanyController extends Controller
 
 
 
-    public function update(Request $request, Company $company)
+public function update(Request $request, Company $company)
+{
+
+    $validated = $request->validate([
+
+        'name'=>'required|string|max:255',
+
+        'address'=>'nullable|string|max:255',
+
+        'email'=>'nullable|email',
+
+        'website'=>'nullable|string',
+
+        'logo'=>'nullable|image|max:2048',
+
+    ]);
+
+
+
+    if($request->hasFile('logo'))
     {
 
 
-        $validated = $request->validate([
-
-            'name'=>'required|string|max:255',
-
-            'address'=>'nullable|string|max:255',
-
-            'email'=>'nullable|email',
-
-            'website'=>'nullable|string',
-
-            'logo'=>'nullable|image|max:2048',
-
-        ]);
-
-
-
-
-
-        if($request->hasFile('logo'))
+        if($company->logo)
         {
 
-
-            if($company->logo)
-            {
-
-                Storage::disk('public')
-                    ->delete($company->logo);
-
-            }
-
-
-
-            $validated['logo'] =
-                $request
-                ->file('logo')
-                ->store(
-                    'logos',
-                    'public'
-                );
-
+            Storage::disk('public')
+                ->delete($company->logo);
 
         }
 
 
 
+        $validated['logo'] = 
+            $request
+            ->file('logo')
+            ->store(
+                'logos',
+                'public'
+            );
 
 
-        $company->update($validated);
+    }
+    else
+    {
 
-
-
-        return redirect()
-            ->route('companies.index');
+        unset($validated['logo']);
 
     }
 
+
+
+
+
+    $company->update($validated);
+
+
+
+    return redirect()
+        ->route('companies.index');
+
+}
 
 
 
