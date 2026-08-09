@@ -14,9 +14,8 @@ class CompanyController extends Controller
     public function index()
     {
 
-        $companies = Company::latest()
-            ->paginate(10);
-
+$companies = Company::orderBy('id', 'asc')
+    ->paginate(10);
 
         return inertia(
             'Companies/Index',
@@ -56,7 +55,7 @@ class CompanyController extends Controller
 
             'website'=>'nullable|string',
 
-            'logo'=>'nullable|image|max:2048',
+            'logo'=>'nullable|image|max:2048|dimensions:min_width=100,min_height=100',
 
         ]);
 

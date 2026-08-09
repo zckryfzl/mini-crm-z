@@ -1,38 +1,57 @@
 # Mini CRM - Laravel Assessment
 
 ## FNXPERTS SDN. BHD.
-Web Developer Assessment Version 2
 
+**Web Developer Assessment Version 2**
 
-## Technology
+A Mini CRM web application developed for managing companies and their employees.
+
+The application provides administrator authentication, company management, employee management, logo upload, pagination, and API integration.
+
+---
+
+# Technology Stack
 
 - Laravel 13
 - PHP 8.4
 - MySQL
-- React + TypeScript
+- React
+- TypeScript
 - Inertia.js
 - Tailwind CSS
+- Vite
 
+---
 
-## Features
+# System Features
 
-### Authentication
+## Authentication
 
-- Admin login
+Implemented using Laravel authentication starter kit.
+
+Features:
+
+- Administrator login
+- Profile management
+- Password management
 - Registration disabled
 
 
-Default admin account:
+Default administrator account:
 
+```
 Email:
 admin@admin.com
 
 Password:
 password
+```
 
+---
 
+# Companies Module
 
-## Companies Module
+The Companies module provides complete CRUD functionality.
 
 Features:
 
@@ -41,20 +60,38 @@ Features:
 - Update company
 - Delete company
 - Upload company logo
-- Pagination
+- Pagination (10 records per page)
 
 
-Fields:
+Company information fields:
 
-- Name
-- Address
-- Email
-- Website
-- Logo
+| Field | Description |
+|---|---|
+| Name | Required company name |
+| Address | Company address |
+| Email | Company email |
+| Website | Company website |
+| Logo | Company logo image |
 
 
+Logo storage location:
 
-## Employees Module
+```
+storage/app/public/logos
+```
+
+
+Public access:
+
+```
+public/storage
+```
+
+---
+
+# Employees Module
+
+The Employees module provides complete CRUD functionality.
 
 Features:
 
@@ -62,95 +99,417 @@ Features:
 - View employee list
 - Update employee
 - Delete employee
-- Pagination
+- Pagination (10 records per page)
 
 
-Fields:
+Employee information fields:
 
-- First Name
-- Last Name
-- Company
-- Email
-- Phone
-
-
-
-## API
+| Field | Description |
+|---|---|
+| First Name | Required |
+| Last Name | Required |
+| Company | Related company |
+| Email | Employee email |
+| Phone | Employee phone number |
 
 
-Endpoint:
+Database relationship:
 
-GET
+```
+Company
+    |
+    | hasMany
+    |
+Employees
 
-/api/companies/{id}
+
+Employee
+    |
+    | belongsTo
+    |
+Company
+```
+
+---
+
+# Database Structure
+
+Database tables:
+
+```
+users
+
+companies
+
+employees
+```
+
+
+Database migrations are included to create the required database structure.
+
+
+Example relationships:
+
+Company Model:
+
+```php
+public function employees()
+{
+    return $this->hasMany(Employee::class);
+}
+```
+
+
+Employee Model:
+
+```php
+public function company()
+{
+    return $this->belongsTo(Company::class);
+}
+```
+
+---
+
+# API
+
+The application provides an API endpoint to retrieve company information together with related employees.
+
+
+## Endpoint
+
+```
+GET /api/companies/{id}
+```
 
 
 Example:
 
-/api/companies/1
+```
+GET http://localhost:8000/api/companies/1
+```
 
 
+## API Response
 
-Response includes:
+The API response includes:
 
 - Company details
 - Employee list
-- employee_count
+- employee_count attribute
 
 
+Example response:
 
-## Installation
+```json
+{
+    "id": 1,
+    "name": "FNXPERTS SDN. BHD.",
+    "email": "info@fnxperts.com",
+    "website": "https://fnxperts.com",
+    "employee_count": 5,
+    "employees": [
+        {
+            "id": 1,
+            "first_name": "Muhammad",
+            "last_name": "Rizal",
+            "email": "muhammad.rizal@example.com"
+        }
+    ]
+}
+```
+
+---
+
+# Validation
+
+Validation is implemented using Laravel validation functions.
+
+Examples:
+
+Company:
+
+- Name is required
+- Email format validation
+- Logo image validation
 
 
-Clone repository:
+Employee:
+
+- First Name required
+- Last Name required
+- Company relationship required
+
+---
+
+# Pagination
+
+Pagination is implemented using Laravel pagination.
+
+Configuration:
+
+```
+10 records per page
+```
 
 
-git clone <repository-url>
+Available on:
+
+- Companies list
+- Employees list
+
+---
+
+# Resource Controllers
+
+The application uses Laravel Resource Controllers.
+
+Implemented controllers:
+
+```
+CompanyController
+
+EmployeeController
+```
 
 
-Install dependencies:
+Available methods:
 
+```
+index()
 
-composer install
+create()
 
-npm install
+store()
 
+show()
 
+edit()
 
-Environment:
+update()
 
+destroy()
+```
 
-copy .env.example .env
+---
 
+# Database Seeding
 
-Generate key:
+Database seeders are included.
 
+Seed data creates:
 
-php artisan key:generate
-
-
-
-Database:
-
-
-php artisan migrate --seed
-
+- Default administrator account
+- Companies data
+- Employees data
 
 
 Run:
 
+```bash
+php artisan db:seed
+```
 
+or:
+
+```bash
+php artisan migrate --seed
+```
+
+---
+
+# Installation Guide
+
+## 1. Clone Repository
+
+```bash
+git clone <repository-url>
+
+cd mini-crm
+```
+
+---
+
+## 2. Install Backend Dependencies
+
+```bash
+composer install
+```
+
+---
+
+## 3. Install Frontend Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## 4. Setup Environment
+
+Create `.env` file:
+
+```bash
+copy .env.example .env
+```
+
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## 5. Configure Database
+
+Update `.env`:
+
+Example:
+
+```
+DB_DATABASE=mini_crm
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+
+Run migration:
+
+```bash
+php artisan migrate --seed
+```
+
+---
+
+## 6. Setup Storage
+
+Create symbolic link for uploaded files:
+
+```bash
+php artisan storage:link
+```
+
+
+Company logos will be accessible through:
+
+```
+/storage/logos
+```
+
+---
+
+# Running Application
+
+Start Laravel server:
+
+```bash
 php artisan serve
+```
 
+
+Start frontend:
+
+```bash
 npm run dev
+```
 
 
+Application URL:
 
-## Testing API
+```
+http://localhost:8000
+```
 
-Use Postman:
+---
+
+# API Testing Using Postman
+
+API can be tested using Postman.
 
 
+Request:
+
+```
 GET
 
 http://localhost:8000/api/companies/1
+```
+
+
+Expected result:
+
+- Company information
+- Related employees
+- Employee count
+
+---
+
+# Screenshots Included
+
+The submission includes screenshots showing:
+
+1. Login page
+
+2. Dashboard
+
+3. Companies list
+
+4. Create company page
+
+5. Edit company functionality
+
+6. Employees list
+
+7. Create employee page
+
+8. API response using Postman
+
+---
+
+# Git Repository
+
+The completed project is available through Git repository.
+
+Repository:
+
+```
+<insert-github-link-here>
+```
+
+---
+
+# Default Login Credentials
+
+```
+Email:
+admin@admin.com
+
+Password:
+password
+```
+
+---
+
+# Project Completion Checklist
+
+✅ Laravel Authentication  
+✅ Admin seed account  
+✅ Company CRUD  
+✅ Employee CRUD  
+✅ Company-Employee relationship  
+✅ Logo upload and storage  
+✅ Validation  
+✅ Pagination  
+✅ Resource Controllers  
+✅ API endpoint  
+✅ employee_count API attribute  
+✅ Postman testing  
+✅ README documentation  
+
+---
+
+## FNXPERTS SDN. BHD.
+## Laravel Web Developer Assessment Submission

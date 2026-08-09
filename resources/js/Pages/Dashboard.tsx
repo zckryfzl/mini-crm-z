@@ -1,6 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import {
+    Bar
+} from 'react-chartjs-2';
 
+
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js';
+
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 interface Company {
 
@@ -46,30 +69,38 @@ interface Employee {
 
 interface Props {
 
-    stats:{
+stats:{
 
-        companies:number;
+    companies:number;
 
-        employees:number;
+    employees:number;
 
-    };
-
-
-    companies:Company[];
+};
 
 
-    employees:Employee[];
+companies:Company[];
+
+
+employees:Employee[];
+
+
+chartData:{
+
+    name:string;
+
+    employees:number;
+
+}[];
 
 }
 
 
-
 export default function Dashboard({
-    stats,
-    companies,
-    employees
+stats,
+companies,
+employees,
+chartData
 }:Props){
-
 
 return (
 
@@ -132,7 +163,80 @@ return (
 
 
     </div>
+{/* CHART */}
 
+<div
+className="
+bg-white
+shadow
+rounded-lg
+p-6
+mt-6
+"
+>
+
+<h2 className="
+text-xl
+font-bold
+mb-5
+">
+Employee Distribution by Company
+</h2>
+
+
+<Bar
+
+data={{
+
+labels:
+
+chartData.map(
+(item)=>item.name
+),
+
+
+datasets:[
+
+{
+
+label:"Employees",
+
+data:
+
+chartData.map(
+(item)=>item.employees
+),
+
+
+}
+
+]
+
+}}
+
+
+options={{
+
+responsive:true,
+
+
+plugins:{
+
+legend:{
+
+display:true
+
+}
+
+}
+
+}}
+
+
+/>
+
+
+</div>
 
 
 
