@@ -3,101 +3,154 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 
+interface Company {
+
+    id:number;
+    name:string;
+    address:string|null;
+    email:string|null;
+    website:string|null;
+    logo:string|null;
+
+}
+
+
 
 export default function Index({companies}:any)
 {
 
 
-const [editing,setEditing] = useState<any>(null);
+    const [editing,setEditing] = useState<Company|null>(null);
 
 
 
-const form = useForm({
+    const form = useForm<{
+        name:string;
+        address:string;
+        email:string;
+        website:string;
+        logo:File|null;
+    }>({
 
-    name:'',
-    address:'',
-    email:'',
-    website:'',
-    logo:null as File|null
-
-});
-
-
-
-
-
-function openEdit(company:any)
-{
-
-    setEditing(company);
-
-
-    form.setData({
-
-        name:company.name ?? '',
-
-        address:company.address ?? '',
-
-        email:company.email ?? '',
-
-        website:company.website ?? '',
-
+        name:'',
+        address:'',
+        email:'',
+        website:'',
         logo:null
 
     });
 
-}
 
 
 
 
-
-function submit(e:any)
-{
-
-    e.preventDefault();
-
-
-    form.post(
-        route(
-            'companies.update',
-            editing.id
-        ),
-        {
-
-            forceFormData:true,
-
-            onSuccess:()=>{
-
-                setEditing(null);
-
-            }
-
-        }
-    );
-
-}
-
-
-
-
-
-function remove(id:number)
-{
-
-    if(confirm('Delete company?'))
+    function openEdit(company:Company)
     {
 
-        router.delete(
-            route(
-                'companies.destroy',
-                id
-            )
-        );
+        setEditing(company);
+
+
+        form.setData({
+
+            name:company.name ?? '',
+
+            address:company.address ?? '',
+
+            email:company.email ?? '',
+
+            website:company.website ?? '',
+
+            logo:null
+
+        });
+
 
     }
 
-}
+
+
+
+
+    function submit()
+    {
+
+
+        if(!editing)
+            return;
+
+
+
+        form.post(
+
+            route(
+                'companies.update',
+                editing.id
+            ),
+
+            {
+
+                forceFormData:true,
+
+
+                headers:{
+                    'X-HTTP-Method-Override':'PUT'
+                },
+
+
+                preserveScroll:true,
+
+
+                onSuccess:()=>{
+
+                    setEditing(null);
+
+                    form.reset();
+
+                },
+
+
+                onError:(errors:any)=>{
+
+                    console.log(errors);
+
+                }
+
+            }
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+    function remove(id:number)
+    {
+
+
+        if(confirm('Delete company?'))
+        {
+
+            router.delete(
+
+                route(
+                    'companies.destroy',
+                    id
+                )
+
+            );
+
+        }
+
+
+    }
+
+
+
 
 
 
@@ -107,34 +160,36 @@ return (
 
 <AuthenticatedLayout>
 
+
 <Head title="Companies"/>
 
 
-<div className="p-6">
+
+<div className="p-8">
 
 
-<div className="bg-white rounded shadow border">
+<div className="
+flex
+justify-between
+items-center
+mb-6
+">
 
 
-<div className="p-5 border-b">
+<h1 className="
+text-3xl
+font-bold
+">
 
-
-<h1 className="text-xl font-bold">
 Companies
+
 </h1>
 
-
-</div>
-
-
-
-
-<div className="p-5">
 
 
 <Link
 
-href="/companies/create"
+href={route('companies.create')}
 
 className="
 bg-green-600
@@ -145,17 +200,31 @@ rounded
 "
 
 >
-Create new company
+
+Create Company
+
 </Link>
 
 
 
+</div>
 
 
-<div className="mt-5 overflow-x-auto">
 
 
-<table className="w-full border">
+
+<div className="
+bg-white
+shadow
+rounded-xl
+overflow-hidden
+">
+
+
+<table className="
+w-full
+text-left
+">
 
 
 <thead className="bg-gray-100">
@@ -164,27 +233,32 @@ Create new company
 <tr>
 
 
-<th className="p-3 border">
+<th className="p-4">
+Logo
+</th>
+
+
+<th className="p-4">
 Name
 </th>
 
 
-<th className="p-3 border">
+<th className="p-4">
 Address
 </th>
 
 
-<th className="p-3 border">
-Email
-</th>
-
-
-<th className="p-3 border">
+<th className="p-4">
 Website
 </th>
 
 
-<th className="p-3 border">
+<th className="p-4">
+Email
+</th>
+
+
+<th className="p-4">
 Action
 </th>
 
@@ -197,45 +271,76 @@ Action
 
 
 
+
 <tbody>
 
 
 {
-companies.data.map((company:any)=>(
+
+companies.data.map((company:Company)=>(
 
 
-<tr key={company.id}>
+<tr key={company.id} className="border-t">
 
 
-<td className="border p-3">
+<td className="p-4">
 
+
+{
+
+company.logo ?
+
+<img
+
+src={`/storage/${company.logo}`}
+
+className="
+w-12
+h-12
+object-cover
+rounded
+"
+
+/>
+
+:
+
+<span className="text-gray-400">
+
+No logo
+
+</span>
+
+}
+
+
+
+</td>
+
+
+
+<td className="p-4">
 {company.name}
-
 </td>
 
 
-<td className="border p-3">
-
+<td className="p-4">
 {company.address}
-
 </td>
 
 
-<td className="border p-3">
-
-{company.email}
-
-</td>
-
-
-<td className="border p-3">
-
+<td className="p-4">
 {company.website}
-
 </td>
 
 
-<td className="border p-3">
+<td className="p-4">
+{company.email}
+</td>
+
+
+
+<td className="p-4">
 
 
 <button
@@ -256,6 +361,7 @@ mr-2
 Edit
 
 </button>
+
 
 
 
@@ -282,15 +388,19 @@ Delete
 </td>
 
 
+
 </tr>
 
 
 ))
 
+
 }
 
 
+
 </tbody>
+
 
 
 </table>
@@ -299,14 +409,10 @@ Delete
 </div>
 
 
-
 </div>
 
 
-</div>
 
-
-</div>
 
 
 
@@ -318,22 +424,28 @@ editing &&
 <div className="
 fixed
 inset-0
-bg-black/40
+bg-black/50
 flex
 items-center
 justify-center
+z-50
 ">
 
 
 <div className="
 bg-white
-rounded
-p-6
-w-[450px]
+rounded-xl
+p-8
+w-full
+max-w-xl
 ">
 
 
-<h2 className="text-xl font-bold mb-4">
+<h2 className="
+text-2xl
+font-bold
+mb-5
+">
 
 Edit Company
 
@@ -344,6 +456,7 @@ Edit Company
 
 
 {
+
 editing.logo ?
 
 <img
@@ -351,8 +464,9 @@ editing.logo ?
 src={`/storage/${editing.logo}`}
 
 className="
-w-24
-h-24
+w-28
+h-28
+rounded
 object-cover
 mb-4
 "
@@ -362,11 +476,13 @@ mb-4
 :
 
 <p className="text-gray-500 mb-4">
+
 No logo added
+
 </p>
 
-}
 
+}
 
 
 
@@ -375,6 +491,8 @@ No logo added
 <input
 
 type="file"
+
+accept="image/*"
 
 className="mb-4"
 
@@ -395,72 +513,74 @@ e.target.files?.[0] ?? null
 
 <input
 
-className="border w-full p-2 mb-3"
+className="border w-full p-3 mb-3"
 
 value={form.data.name}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+form.setData(
 'name',
 e.target.value
 )
+
 }
 
 />
 
 
 
-
-
 <input
 
-className="border w-full p-2 mb-3"
+className="border w-full p-3 mb-3"
 
 value={form.data.address}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+form.setData(
 'address',
 e.target.value
 )
+
 }
 
 />
 
 
 
-
-
 <input
 
-className="border w-full p-2 mb-3"
+className="border w-full p-3 mb-3"
 
 value={form.data.email}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+form.setData(
 'email',
 e.target.value
 )
+
 }
 
 />
 
 
 
-
-
 <input
 
-className="border w-full p-2 mb-3"
+className="border w-full p-3 mb-5"
 
 value={form.data.website}
 
-onChange={
-e=>form.setData(
+onChange={(e)=>
+
+form.setData(
 'website',
 e.target.value
 )
+
 }
 
 />
@@ -476,10 +596,10 @@ onClick={submit}
 className="
 bg-green-600
 text-white
-px-4
+px-5
 py-2
 rounded
-mr-2
+mr-3
 "
 
 >
@@ -490,14 +610,13 @@ Save
 
 
 
-
 <button
 
 onClick={()=>setEditing(null)}
 
 className="
 border
-px-4
+px-5
 py-2
 rounded
 "
@@ -515,11 +634,13 @@ Cancel
 
 </div>
 
+
 }
 
 
 
 </AuthenticatedLayout>
+
 
 );
 
