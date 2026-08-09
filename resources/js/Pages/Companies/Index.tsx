@@ -32,7 +32,6 @@ const [editing,setEditing] = useState<Company|null>(null);
 
 
 
-
 const form = useForm({
 
     name:'',
@@ -48,11 +47,31 @@ const form = useForm({
 
 
 
+
 function openEdit(company:Company)
 {
 
 
-    setEditing(company);
+    console.log("EDIT COMPANY:",company);
+
+
+
+    setEditing({
+
+        id:company.id,
+
+        name:company.name,
+
+        address:company.address,
+
+        email:company.email,
+
+        website:company.website,
+
+        logo:company.logo
+
+    });
+
 
 
 
@@ -80,16 +99,22 @@ function openEdit(company:Company)
 
 
 
+
 function save(e:any)
 {
-
 
     e.preventDefault();
 
 
 
     if(!editing?.id)
+    {
+
+        console.log("Missing company ID");
+
         return;
+
+    }
 
 
 
@@ -127,6 +152,7 @@ function save(e:any)
             },
 
 
+
             onError:(errors:any)=>{
 
 
@@ -143,6 +169,7 @@ function save(e:any)
 
 
 }
+
 
 
 
@@ -180,14 +207,15 @@ function remove(id:number)
 
 
 
-return (
 
+return (
 
 <AuthenticatedLayout>
 
 
-
 <Head title="Companies"/>
+
+
 
 
 
@@ -195,23 +223,35 @@ return (
 
 
 
-<h1 className="
-text-3xl
-font-bold
-mb-5
-">
+<div className="bg-white shadow rounded border">
+
+
+
+
+
+<div className="p-5 border-b">
+
+
+<h1 className="text-xl font-bold">
 
 Companies
 
 </h1>
 
 
+</div>
 
 
 
-<div className="
-mb-5
-">
+
+
+
+
+<div className="p-5">
+
+
+
+
 
 
 <Link
@@ -228,12 +268,11 @@ rounded
 
 >
 
-+ Create New Company
+Create new company
 
 </Link>
 
 
-</div>
 
 
 
@@ -241,34 +280,37 @@ rounded
 
 
 <div className="
-bg-white
-rounded
-shadow
-overflow-hidden
+mt-5
+overflow-x-auto
 ">
 
 
 <table className="
 w-full
+border
 ">
 
 
-<thead className="
-bg-gray-100
-">
+
+
+
+<thead className="bg-gray-100">
 
 
 <tr>
 
 
-<th className="p-3 text-left">
+
+<th className="border p-3">
 
 Logo
 
 </th>
 
 
-<th className="p-3 text-left">
+
+
+<th className="border p-3">
 
 Company Name
 
@@ -276,7 +318,8 @@ Company Name
 
 
 
-<th className="p-3 text-left">
+
+<th className="border p-3">
 
 Address
 
@@ -285,7 +328,8 @@ Address
 
 
 
-<th className="p-3 text-left">
+
+<th className="border p-3">
 
 Email
 
@@ -294,7 +338,8 @@ Email
 
 
 
-<th className="p-3 text-left">
+
+<th className="border p-3">
 
 Website
 
@@ -303,11 +348,14 @@ Website
 
 
 
-<th className="p-3 text-left">
+
+<th className="border p-3">
 
 Action
 
 </th>
+
+
 
 
 </tr>
@@ -321,10 +369,14 @@ Action
 
 
 
+
+
 <tbody>
 
 
+
 {
+
 
 companies.data.map((company:Company)=>(
 
@@ -333,15 +385,13 @@ companies.data.map((company:Company)=>(
 
 key={company.id}
 
-className="
-border-t
-"
-
-
 >
 
 
-<td className="p-3">
+
+
+
+<td className="border p-3">
 
 
 {
@@ -365,16 +415,21 @@ object-cover
 
 :
 
-<div className="
+
+<div
+
+className="
 w-14
 h-14
-rounded
 bg-gray-200
+rounded
 flex
 items-center
 justify-center
 text-xs
-">
+"
+
+>
 
 No Logo
 
@@ -391,7 +446,9 @@ No Logo
 
 
 
-<td className="p-3 font-semibold">
+
+
+<td className="border p-3">
 
 
 {company.name}
@@ -403,10 +460,14 @@ No Logo
 
 
 
-<td className="p-3">
+
+
+<td className="border p-3">
+
 
 {company.address ?? '-'}
 
+
 </td>
 
 
@@ -414,20 +475,27 @@ No Logo
 
 
 
-<td className="p-3">
+
+<td className="border p-3">
+
 
 {company.email ?? '-'}
 
+
 </td>
 
 
 
 
 
-<td className="p-3">
+
+
+<td className="border p-3">
+
 
 {company.website ?? '-'}
 
+
 </td>
 
 
@@ -436,7 +504,11 @@ No Logo
 
 
 
-<td className="p-3">
+
+<td className="border p-3">
+
+
+
 
 
 
@@ -484,13 +556,19 @@ Delete
 
 
 
+
+
+
 </td>
 
 
 
 
 
+
+
 </tr>
+
 
 
 
@@ -501,14 +579,21 @@ Delete
 
 
 
+
 </tbody>
+
+
+
 
 
 
 </table>
 
 
+
+
 </div>
+
 
 
 
@@ -536,20 +621,32 @@ key={index}
 
 href={link.url ?? '#'}
 
+
 className={`
+
 px-3
+
 py-1
+
 border
+
 rounded
 
+
 ${link.active
+
 ?
+
 'bg-green-600 text-white'
+
 :
-''
+
+'bg-white'
+
 }
 
 `}
+
 
 dangerouslySetInnerHTML={{
 
@@ -559,7 +656,6 @@ __html:link.label
 
 
 />
-
 
 
 ))
@@ -579,29 +675,69 @@ __html:link.label
 
 
 
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {
-editing && (
+
+
+editing &&
 
 
 
-<div className="
+<div
+
+className="
 fixed
 inset-0
 bg-black/40
 flex
 items-center
 justify-center
-z-50
-">
+"
+
+>
 
 
-<div className="
+
+
+<div
+
+className="
 bg-white
 rounded
-shadow-xl
+shadow
 p-6
 w-[450px]
-">
+"
+
+>
+
 
 
 <h2 className="
@@ -620,7 +756,9 @@ Edit Company
 
 
 
+
 {
+
 
 editing.logo ?
 
@@ -661,13 +799,17 @@ No logo added
 
 
 
+
+
 <input
 
 type="file"
 
 className="
-mb-4
+mb-3
 "
+
+accept="image/*"
 
 onChange={(e)=>
 
@@ -683,6 +825,9 @@ e.target.files?.[0] ?? null
 
 
 />
+
+
+
 
 
 
@@ -723,6 +868,7 @@ e.target.value
 
 
 
+
 <input
 
 className="
@@ -750,6 +896,8 @@ e.target.value
 
 
 />
+
+
 
 
 
@@ -791,13 +939,14 @@ e.target.value
 
 
 
+
 <input
 
 className="
 border
 w-full
 p-2
-mb-5
+mb-3
 "
 
 placeholder="Website"
@@ -825,6 +974,8 @@ e.target.value
 
 
 
+
+
 <button
 
 onClick={save}
@@ -842,8 +993,9 @@ mr-2
 
 Save
 
-
 </button>
+
+
 
 
 
@@ -866,22 +1018,21 @@ rounded
 
 Cancel
 
-
 </button>
 
 
 
 
 
-</div>
-
-
 
 </div>
 
 
 
-)
+
+
+</div>
+
 
 
 }
@@ -889,12 +1040,9 @@ Cancel
 
 
 
-</div>
-
 
 
 </AuthenticatedLayout>
-
 
 
 );
