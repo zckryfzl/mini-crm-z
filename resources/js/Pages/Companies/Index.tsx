@@ -165,50 +165,30 @@ return (
 
 
 
-<div className="p-8">
+<div className="mb-6">
+
+    <h1 className="text-3xl font-bold mb-4">
+        Companies
+    </h1>
 
 
-<div className="
-flex
-justify-between
-items-center
-mb-6
-">
-
-
-<h1 className="
-text-3xl
-font-bold
-">
-
-Companies
-
-</h1>
-
-
-
-<Link
-
-href={route('companies.create')}
-
-className="
-bg-green-600
-text-white
-px-5
-py-2
-rounded
-"
-
->
-
-Create Company
-
-</Link>
-
+    <Link
+        href="/companies/create"
+        className="
+        inline-flex
+        bg-green-600
+        text-white
+        px-5
+        py-2
+        rounded-lg
+        hover:bg-green-700
+        "
+    >
+        + Create New Company
+    </Link>
 
 
 </div>
-
 
 
 
