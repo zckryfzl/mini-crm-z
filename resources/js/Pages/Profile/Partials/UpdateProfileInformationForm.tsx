@@ -15,8 +15,11 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
-    const user = usePage().props.auth.user;
+const page = usePage();
 
+console.log("INERTIA PROPS:", page.props);
+
+const user = page.props.auth?.user;
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
