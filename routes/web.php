@@ -19,16 +19,15 @@ return redirect('/dashboard');
 
 
 
-Route::get('/dashboard',function(){
+use App\Http\Controllers\DashboardController;
 
-return Inertia::render(
-'Dashboard'
-);
 
-})
+Route::get(
+'/dashboard',
+[DashboardController::class,'index']
+)
 ->middleware(['auth'])
 ->name('dashboard');
-
 
 
 
